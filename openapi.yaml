@@ -1,0 +1,286 @@
+openapi: 3.1.0
+info:
+  title: MetaLink API
+  version: 1.0.0
+  description: >
+    A fast REST API that accepts a URL and returns structured metadata —
+    Open Graph tags, Twitter Cards, favicons, titles, and descriptions.
+  contact:
+    url: https://metalink.mintlify.app
+  license:
+    name: MIT
+
+servers:
+  - url: https://metalink-api.fly.dev
+    description: Production
+
+security:
+  - ApiKeyHeader: []
+  - ApiKeyQuery: []
+
+paths:
+  /v1/metadata:
+    get:
+      operationId: getMetadata
+      summary: Get URL metadata
+      description: >
+        Fetches and returns structured metadata for the given URL.
+        Results are cached for 24 hours by default. Pass `cache=false`
+        to skip the cache and fetch fresh data.
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: The URL to fetch metadata for
+          schema:
+            type: string
+            format: uri
+          example: https://github.com
+        - name: timeout
+          in: query
+          required: false
+          description: Custom timeout in milliseconds (default 5000, max 15000)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 15000
+            default: 5000
+        - name: cache
+          in: query
+          required: false
+          description: >
+            Whether to use cached results. Defaults to true.
+            Set to `false` to skip the cache and fetch fresh data.
+          schema:
+            type: boolean
+            default: true
+      responses:
+        "200":
+          description: Metadata successfully retrieved
+          headers:
+            X-RateLimit-Limit:
+              description: Max requests per minute for this key's tier
+              schema:
+                type: integer
+            X-RateLimit-Remaining:
+              description: Requests remaining in current minute window
+              schema:
+                type: integer
+            X-RateLimit-Reset:
+              description: Unix timestamp when the minute window resets
+              schema:
+                type: integer
+            X-Monthly-Limit:
+              description: Max requests per month for this user's tier
+              schema:
+                type: integer
+            X-Monthly-Used:
+              description: Requests used this month
+              schema:
+                type: integer
+            X-Monthly-Remaining:
+              description: Requests remaining this month
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetadataResponse"
+              example:
+                url: "https://github.com"
+                title: "GitHub: Let's build from here"
+                description: "GitHub is where over 100 million developers shape the future of software."
+                image: "https://github.githubassets.com/assets/campaign-social-031d6161fa10.png"
+                favicon: "https://github.githubassets.com/favicons/favicon.svg"
+                site_name: "GitHub"
+                type: "website"
+                locale: "en_US"
+                twitter_card:
+                  card: "summary_large_image"
+                  site: "@github"
+                fetched_at: "2026-03-25T18:30:00Z"
+                fetch_method: "http"
+                response_time_ms: 142
+        "400":
+          description: Invalid or missing URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error: "Invalid URL: missing scheme (expected http:// or https://)"
+        "401":
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error: "Invalid API key"
+        "429":
+          description: Rate limit exceeded (per-minute or monthly)
+          headers:
+            Retry-After:
+              description: >
+                Seconds until you can retry. Only present on per-minute
+                rate limit responses, not monthly cap responses.
+              schema:
+                type: integer
+            X-Monthly-Limit:
+              description: Max requests per month for this user's tier (present on monthly 429s)
+              schema:
+                type: integer
+            X-Monthly-Used:
+              description: Requests used this month (present on monthly 429s)
+              schema:
+                type: integer
+            X-Monthly-Reset:
+              description: >
+                ISO 8601 date-time when the monthly counter resets
+                (e.g., "2026-04-01T00:00:00Z"). Only present on monthly
+                cap responses.
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                per_minute:
+                  summary: Per-minute rate limit exceeded
+                  value:
+                    error: "Rate limit exceeded. 100 requests per minute allowed on the free tier. Retry after 42 seconds."
+                monthly:
+                  summary: Monthly cap exceeded
+                  value:
+                    error: "Monthly request limit reached (1000/1000). Upgrade your plan at https://metalink.dev/pricing"
+        "502":
+          description: Target URL unreachable or timed out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error: "Failed to fetch URL: connection timed out"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error: "Internal server error"
+
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Health check
+      description: Public health check endpoint. No authentication required.
+      security: []
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+components:
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Pass your API key in the `X-API-Key` header (recommended)
+    ApiKeyQuery:
+      type: apiKey
+      in: query
+      name: api_key
+      description: Pass your API key as the `api_key` query parameter
+
+  schemas:
+    MetadataResponse:
+      type: object
+      required:
+        - url
+        - fetched_at
+        - fetch_method
+        - response_time_ms
+      properties:
+        url:
+          type: string
+          description: The originally requested URL
+        canonical_url:
+          type: string
+          description: The canonical URL if specified by the page
+        title:
+          type: string
+          description: Page title (from og:title or <title> tag)
+        description:
+          type: string
+          description: Page description (from og:description or meta description)
+        image:
+          type: string
+          description: Primary image URL (from og:image)
+        favicon:
+          type: string
+          description: Favicon URL
+        site_name:
+          type: string
+          description: Site name (from og:site_name)
+        type:
+          type: string
+          description: Content type (from og:type, e.g. "article", "website")
+        locale:
+          type: string
+          description: Locale (from og:locale, e.g. "en_US")
+        twitter_card:
+          type: object
+          description: Twitter Card metadata (omitted if no Twitter meta tags found)
+          properties:
+            card:
+              type: string
+              description: Card type (e.g. "summary_large_image")
+            site:
+              type: string
+              description: Publisher's Twitter handle
+            creator:
+              type: string
+              description: Content creator's Twitter handle
+        meta:
+          type: object
+          description: Additional meta information (omitted if none found)
+          properties:
+            author:
+              type: string
+            published_time:
+              type: string
+            modified_time:
+              type: string
+        fetched_at:
+          type: string
+          format: date-time
+          description: When the metadata was fetched (ISO 8601)
+        fetch_method:
+          type: string
+          enum: [http, headless]
+          description: How the page was fetched
+        response_time_ms:
+          type: integer
+          format: int64
+          minimum: 0
+          description: How long the fetch took in milliseconds
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
