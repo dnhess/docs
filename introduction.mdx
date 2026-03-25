@@ -1,0 +1,28 @@
+---
+title: Introduction
+description: "A fast API for extracting metadata from any URL"
+---
+
+MetaLink is a REST API that accepts a URL and returns structured metadata — Open Graph tags, Twitter Cards, favicons, titles, and descriptions — in a single JSON response.
+
+## Key Features
+
+- **Comprehensive metadata** — Extracts Open Graph, Twitter Card, favicons, author info, and more
+- **Fast** — Typical response under 50ms for cached URLs, under 2 seconds for fresh fetches
+- **Cached** — Results are cached for 24 hours, so repeated lookups are nearly instant
+- **Simple** — One endpoint, one API key, one JSON response
+
+## Base URL
+
+All API requests use this base URL:
+
+```
+https://metalink-api.fly.dev
+```
+
+## Quick Example
+
+```bash
+curl "https://metalink-api.fly.dev/v1/metadata?url=https://github.com" \
+  -H "X-API-Key: YOUR_API_KEY"
+```

@@ -1,0 +1,54 @@
+---
+title: Authentication
+description: "How to authenticate with the MetaLink API"
+---
+
+Every request to the MetaLink API requires an API key. You can pass it in two ways:
+
+## Header (Recommended)
+
+```bash
+curl "https://metalink-api.fly.dev/v1/metadata?url=https://example.com" \
+  -H "X-API-Key: ml_live_YOUR_KEY_HERE"
+```
+
+## Query Parameter
+
+```bash
+curl "https://metalink-api.fly.dev/v1/metadata?url=https://example.com&api_key=ml_live_YOUR_KEY_HERE"
+```
+
+<Warning>
+  The header method is recommended. Query parameters may be logged in server access logs and browser history.
+</Warning>
+
+## Key Format
+
+All MetaLink API keys use this format:
+
+```
+ml_live_ + 32 hex characters
+```
+
+Example: `ml_live_de5c435f025332da7a0d07a21baeb95f`
+
+## Getting Your Key
+
+1. Sign in at the [Dashboard](https://metalink-web.vercel.app/auth/login)
+2. Click **Create API Key**
+3. Copy the key immediately
+
+<Info>
+  API keys are shown only once at creation. They are stored as SHA-256 hashes — we cannot retrieve them for you. If you lose a key, deactivate it and create a new one.
+</Info>
+
+## Key Limits
+
+The number of active keys depends on your plan:
+
+| Plan | Max Active Keys |
+|------|----------------|
+| Free | 2 |
+| Starter | 5 |
+| Growth | 10 |
+| Business | 20 |

@@ -1,0 +1,51 @@
+---
+title: Errors
+description: "Error codes and how to handle them"
+---
+
+All errors return a JSON object with an `error` field:
+
+```json
+{
+  "error": "Human-readable error message"
+}
+```
+
+## Error Codes
+
+| Status | Meaning | Common Cause |
+|--------|---------|-------------|
+| `400` | Bad Request | Missing or invalid `url` parameter, private IP address, non-HTTP scheme |
+| `401` | Unauthorized | Missing or invalid API key |
+| `429` | Too Many Requests | Per-minute or monthly rate limit exceeded |
+| `502` | Bad Gateway | Target URL is unreachable, timed out, or returned an error |
+| `500` | Internal Server Error | Something went wrong on our end |
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="400 — Invalid URL">
+    Make sure your URL:
+    - Starts with `http://` or `https://`
+    - Is a valid, publicly accessible URL
+    - Does not point to a private IP address (e.g., `localhost`, `10.x.x.x`, `192.168.x.x`)
+  </Accordion>
+
+  <Accordion title="401 — Invalid API key">
+    - Check that your key starts with `ml_live_`
+    - Ensure you're passing it in the `X-API-Key` header or `api_key` query parameter
+    - Verify the key is still active in your [Dashboard](https://metalink-web.vercel.app/dashboard)
+  </Accordion>
+
+  <Accordion title="429 — Rate limit exceeded">
+    - Check the `Retry-After` header for per-minute limits
+    - Check `X-Monthly-Remaining` to see if you've hit your monthly cap
+    - Consider [upgrading your plan](https://metalink-web.vercel.app/dashboard) for higher limits
+  </Accordion>
+
+  <Accordion title="502 — Target URL unreachable">
+    - The URL you're fetching may be down or blocking requests
+    - Try increasing the `timeout` parameter (up to 15000ms)
+    - Verify the URL is accessible from a browser
+  </Accordion>
+</AccordionGroup>

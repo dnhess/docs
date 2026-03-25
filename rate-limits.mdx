@@ -1,0 +1,45 @@
+---
+title: Rate Limits
+description: "Understand request limits and how to handle them"
+---
+
+MetaLink enforces two types of rate limits: **per-minute** and **monthly**.
+
+## Limits by Plan
+
+| Plan | Per Minute | Monthly |
+|------|-----------|---------|
+| Free | 100 | 1,000 |
+| Starter | 300 | 10,000 |
+| Growth | 600 | 50,000 |
+| Business | 1,200 | 200,000 |
+
+<Note>
+  Monthly limits are per **user**, not per key. If you have multiple API keys, they share the same monthly quota.
+</Note>
+
+## Rate Limit Headers
+
+Every successful response includes these headers:
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Max requests per minute for your tier |
+| `X-RateLimit-Remaining` | Requests remaining in the current minute |
+| `X-RateLimit-Reset` | Unix timestamp when the minute window resets |
+| `X-Monthly-Limit` | Max requests per month for your tier |
+| `X-Monthly-Used` | Requests used this month |
+| `X-Monthly-Remaining` | Requests remaining this month |
+
+## When You Hit the Limit
+
+If you exceed either limit, you'll receive a `429 Too Many Requests` response.
+
+**Per-minute limit exceeded:**
+- Response includes a `Retry-After` header (seconds until you can retry)
+- Wait the indicated time, then retry
+
+**Monthly limit exceeded:**
+- Response includes `X-Monthly-Reset` header (ISO 8601 date-time, e.g., `2026-04-01T00:00:00Z`)
+- Monthly counters reset on the 1st of each month at midnight UTC
+- [Upgrade your plan](https://metalink-web.vercel.app/dashboard) for a higher limit
