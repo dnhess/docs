@@ -34,13 +34,13 @@ All errors return a JSON object with an `error` field:
   <Accordion title="401 — Invalid API key">
     - Check that your key starts with `ml_live_`
     - Ensure you're passing it in the `X-API-Key` header or `api_key` query parameter
-    - Verify the key is still active in your [Dashboard](https://metalink-web.vercel.app/dashboard)
+    - Verify the key is still active in your [Dashboard](https://web-ashy-kappa-57.vercel.app/dashboard)
   </Accordion>
 
   <Accordion title="429 — Rate limit exceeded">
     - Check the `Retry-After` header for per-minute limits
     - Check `X-Monthly-Remaining` to see if you've hit your monthly cap
-    - Consider [upgrading your plan](https://metalink-web.vercel.app/dashboard) for higher limits
+    - Consider [upgrading your plan](https://web-ashy-kappa-57.vercel.app/dashboard) for higher limits
   </Accordion>
 
   <Accordion title="502 — Target URL unreachable">
