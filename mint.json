@@ -1,0 +1,71 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "MetaLink",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#00E5C7",
+    "light": "#00E5C7",
+    "dark": "#00E5C7",
+    "background": {
+      "dark": "#050505"
+    }
+  },
+  "theme": "quill",
+  "layout": "sidenav",
+  "sidebar": {
+    "items": "border"
+  },
+  "topbar": {
+    "style": "default"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "introduction",
+        "quickstart",
+        "authentication"
+      ]
+    },
+    {
+      "group": "Usage",
+      "pages": [
+        "rate-limits",
+        "errors"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api-reference/get-metadata",
+        "api-reference/health-check"
+      ]
+    }
+  ],
+  "openapi": [
+    "https://raw.githubusercontent.com/dnhess/metalink/main/openapi.yaml"
+  ],
+  "topbarLinks": [
+    {
+      "name": "Dashboard",
+      "url": "https://metalink-web.vercel.app/dashboard"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get API Key",
+    "url": "https://metalink-web.vercel.app/auth/login"
+  },
+  "feedback": {
+    "thumbsRating": true
+  }
+}
