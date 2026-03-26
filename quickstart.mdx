@@ -5,18 +5,18 @@ description: "Get from zero to your first API response in under 2 minutes"
 
 ## 1. Create an Account
 
-Sign up at the [MetaLink Dashboard](https://web-ashy-kappa-57.vercel.app/auth/login) using GitHub or Google.
+Sign up at the [MetaLink Dashboard](https://metalinkapi.com/auth/login) using GitHub or Google.
 
 ## 2. Generate an API Key
 
-From the [Dashboard](https://web-ashy-kappa-57.vercel.app/dashboard), click **Create API Key**. Copy the key immediately — it won't be shown again.
+From the [Dashboard](https://metalinkapi.com/dashboard), click **Create API Key**. Copy the key immediately — it won't be shown again.
 
 Your key looks like: `ml_live_abc123def456...`
 
 ## 3. Make Your First Request
 
 ```bash
-curl "https://metalink-api.fly.dev/v1/metadata?url=https://github.com" \
+curl "https://api.metalinkapi.com/v1/metadata?url=https://github.com" \
   -H "X-API-Key: ml_live_YOUR_KEY_HERE"
 ```
 

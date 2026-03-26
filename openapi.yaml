@@ -11,7 +11,7 @@ info:
     name: MIT
 
 servers:
-  - url: https://metalink-api.fly.dev
+  - url: https://api.metalinkapi.com
     description: Production
 
 security:

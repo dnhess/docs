@@ -58,12 +58,12 @@
   "topbarLinks": [
     {
       "name": "Dashboard",
-      "url": "https://web-ashy-kappa-57.vercel.app/dashboard"
+      "url": "https://metalinkapi.com/dashboard"
     }
   ],
   "topbarCtaButton": {
     "name": "Get API Key",
-    "url": "https://web-ashy-kappa-57.vercel.app/auth/login"
+    "url": "https://metalinkapi.com/auth/login"
   },
   "feedback": {
     "thumbsRating": true
